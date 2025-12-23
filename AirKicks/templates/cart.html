@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{# This cart page also uses my main base.html for the overall look and feel #}
+
+{% block title %}Your Shopping Cart - AirKicks{% endblock %}
+{# Setting a specific title for when the user is viewing their shopping cart #}
+
+{% block content %}
+<div class="cart-container">
+    <div class="cart-header">
+        <h1>
+            Your Shopping Cart
+        </h1>
+    </div>
+    {# Just a simple header for the cart page #}
+
+    {% if not items %}
+    {# This 'if' checks if there are any items in the cart if not it shows an empty cart message #}
+        <div class="empty-cart">
+            <h2>
+                Your Cart Is Empty!
+            </h2>
+            <p>
+                Looks like you haven't added any premium kicks yet Time to explore!
+            </p>
+            <a href="{{ url_for('home') }}" class="button continue-shopping-link">
+                ← Start Shopping
+            </a>
+        </div>
+        {# This whole div is what users see if their cart is empty with a link to go shopping #}
+    {% else %}
+    {# If there ARE items then this 'else' block shows them instead #}
+        <div class="cart-items">
+            {% for item in items %}
+            {# Looping through each 'item' that my app.py sent over for the cart #}
+            <div class="cart-item" 
+                 data-cart-item-id="{{ item.cart_item_id }}" 
+                 data-product-id="{{ item.product_id }}">
+                 {# Each item in the cart has its own div I added data attributes here for my JavaScript if needed #}
+                <div class="cart-item-image-container">
+                    <a href="{{ url_for('product_details', product_id=item.product_id) }}">
+                        <img src="{{ url_for('static', filename='images/' + item.image) if item.image else url_for('static', filename='images/default-sneaker.png') }}" 
+                             alt="{{ item.name }}" 
+                             class="cart-item-image">
+                        {# Showing the item's image with my usual fallback for a default one if it's missing #}
+                    </a>
+                    {# Made the image a link to the product page too #}
+                </div>
+                
+                <div class="cart-item-details">
+                    <h3 class="cart-item-title">
+                        <a href="{{ url_for('product_details', product_id=item.product_id) }}">
+                            {{ item.name }}
+                        </a>
+                    </h3>
+                    {# The name of the item in the cart also a link to its product page #}
+                    <div class="cart-item-info">
+                        <span class="cart-item-price">
+                            £{{ "%.2f"|format(item.price) }} each
+                        </span>
+                        {# Price for one of these items formatted nicely #}
+                        <div class="quantity-control">
+                            <button class="quantity-btn decrease-quantity" 
+                                    data-action="decrease" 
+                                    data-item-id="{{ item.cart_item_id }}">
+                                -
+                            </button>
+                            <span class="cart-item-quantity-display" 
+                                  id="quantity-{{ item.cart_item_id }}">
+                                  {{ item.quantity }}
+                            </span>
+                            <button class="quantity-btn increase-quantity" 
+                                    data-action="increase" 
+                                    data-item-id="{{ item.cart_item_id }}">
+                                +
+                            </button>
+                        </div>
+                        {# These are the plus and minus buttons for changing quantity and the quantity display itself #}
+                        <span class="cart-item-subtotal" 
+                              id="subtotal-{{ item.cart_item_id}}">
+                              Item Total: £{{ "%.2f"|format(item.item_total_price) }}
+                        </span>
+                        {# Total price for this specific item including its quantity #}
+                        <span class="cart-item-eco">
+                            🌱 {{ item.carbon_footprint }}kg CO₂ each
+                        </span>
+                        {# Eco info for this item #}
+                    </div>
+                    {# This groups all the little details like price quantity and eco info for an item #}
+                </div>
+                {# This div holds all the text details for the cart item #}
+                
+                <div class="cart-item-actions">
+                    <form action="{{ url_for('remove_from_cart', cart_item_id=item.cart_item_id) }}" 
+                          method="POST" 
+                          class="remove-item-form">
+                        <button type="submit" 
+                                class="remove-btn" 
+                                data-cart-item-id="{{ item.cart_item_id }}">
+                                🗑️ Remove
+                        </button>
+                    </form>
+                    {# This form and button is for removing the item from the cart
+                       My JavaScript handles the click so the page doesn't fully reload in a clunky way #}
+                </div>
+                {# This div is for actions like removing the item #}
+            </div>
+            {# This whole 'cart-item' div is for one single item in the cart list #}
+            {% endfor %}
+            {# Finishes the loop for all the cart items #}
+        </div>
+        {# This div wraps all the individual cart item rows when the cart isn't empty #}
+
+        <div class="cart-summary">
+            <h2>
+                Cart Summary
+            </h2>
+            {# Title for the summary box #}
+            <div class="summary-row">
+                <span class="summary-label">
+                    Subtotal
+                </span>
+                <span class="summary-value" id="cart-subtotal">
+                    £{{ "%.2f"|format(grand_total) }}
+                </span>
+            </div>
+            {# Shows the subtotal of all items #}
+            <div class="summary-row">
+                <span class="summary-label">
+                    Estimated Carbon Footprint
+                </span>
+                <span class="summary-value" id="cart-total-carbon">
+                    {{ "%.2f"|format(total_carbon_impact) }}kg CO₂
+                </span>
+            </div>
+            {# Shows the total carbon footprint for the whole cart #}
+            <hr>
+            {# A line to separate subtotals from the grand total #}
+            <div class="summary-row total-row">
+                <span class="summary-label">
+                    Grand Total
+                </span>
+                <span class="summary-value" id="cart-grand-total">
+                    £{{ "%.2f"|format(grand_total) }}
+                </span>
+            </div>
+            {# The final total price for everything in the cart #}
+            <a href="{{ url_for('checkout') }}" class="checkout-btn">
+                🔒 Proceed to Checkout
+            </a>
+            {# Button to go to the checkout page #}
+            <a href="{{ url_for('home') }}" class="button continue-shopping-link mt-2">
+                ← Or Continue Shopping
+            </a>
+            {# A link to go back and shop for more items #}
+        </div>
+        {# This section shows the totals for the whole cart and the checkout button #}
+    {% endif %}
+    {# Ends the if/else block for showing cart items or the empty message #}
+</div>
+{# This is the main container for everything on the cart page #}
+{% endblock %}
+{# This is the end of the main content block for my shopping cart page #}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{# This 500 error page also uses my main base.html for the general layout header and footer #}
+
+{% block title %}Server Error - AirKicks{% endblock %}
+{# Setting a specific title for the browser tab so the user knows its a server error on my site #}
+
+{% block content %}
+<div class="container text-center" 
+     style="padding: 4rem 1rem;">
+    {# I used a container and text-center to make the error message look neat and centered
+       and the padding gives it some space from the edges #}
+    <h1>
+        500 - Internal Server Error
+    </h1>
+    {# The main error heading letting the user know its a 500 error
+       This usually means something went wrong on my server's side #}
+
+    <p>
+        We're sorry something went wrong on our end We're working to fix it!
+    </p>
+    {# A user-friendly message explaining the situation briefly and reassuring the user #}
+
+    <p>
+        <a href="{{ url_for('home') }}" class="button">
+            Return to the homepage
+        </a>
+    </p>
+    {# Providing a clear link to get the user back to the homepage
+       I used my general 'button' class for styling this link #}
+
+    {# This part below is optional and usually only for when I'm developing (debug mode)
+       It can help me see what the error was but I wouldn't show it to regular users normally #}
+    {% if error and config.DEBUG %}
+    <pre style="text-align: left; background: #333; padding: 1rem; border-radius: 5px; margin-top: 1rem; color: #eee; overflow-x: auto; font-size: 0.8rem;">
+        Error details: {{ error }}
+    </pre>
+    {# If the error object and debug mode are available I can print some details here
+       The <pre> tag helps keep the formatting of the error message if its technical #}
+    {% endif %}
+    {# This 'if' block makes sure the technical error details only show up if they exist and Im in debug mode #}
+</div>
+{# This div wraps all the 500 error info on the page and centers it #}
+{% endblock %}
+{# This is the main content block for my 500 internal server error page
+   I tried to make it a bit reassuring for the user and provide a way back to the site #}

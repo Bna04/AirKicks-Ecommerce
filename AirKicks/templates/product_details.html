@@ -1,0 +1,53 @@
+{# This is the main product detail page - the 'recently_viewed' section starts below #}
+{# ... (previous content of products.html: main product image, details, add to cart button) ... #}
+
+{% if recently_viewed %}
+<section class="recently-viewed-section">
+    <h2>
+        Recently Viewed Kicks
+    </h2>
+    <div class="product-grid recently-viewed-grid">
+        {% for recent_product in recently_viewed %}
+        {# Looping through each product the user recently looked at. #}
+        
+        {# This 'if' is a just-in-case check; app.py should already make sure the current product isn't in this list. #}
+        {% if recent_product.id != product.id %} 
+        <div class="recent-product-wrapper"> 
+            <a href="{{ url_for('product_details', product_id=recent_product.id) }}" 
+               class="recent-product-card"
+               data-product-id="{{ recent_product.id }}">
+                {# Each one is a link to that product's page. #}
+                <div class="recent-product-image-container">
+                    <img src="{{ url_for('static', filename='images/' + recent_product.image) if recent_product.image else url_for('static', filename='images/default-sneaker.png') }}" 
+                         alt="{{ recent_product.name }}" 
+                         class="recent-product-image">
+                    {# Showing the image, with my usual fallback for a default one if needed. #}
+                </div>
+                <div class="recent-product-info">
+                    <h4>
+                        {{ recent_product.name }}
+                    </h4>
+                    <div class="recent-product-meta">
+                        <span class="price">
+                            £{{ "%.2f"|format(recent_product.price) }}
+                        </span>
+                        <span class="eco">
+                            🌱 {{ recent_product.carbon_footprint }}kg
+                        </span>
+                    </div>
+                </div>
+            </a>
+            {# I decided not to put an "Add to Cart" button directly on these to keep this section a bit cleaner. #}
+        </div>
+        {% endif %}
+        {% endfor %}
+        {# This ends the loop that shows all the recently viewed items. #}
+    </div>
+    {# This whole 'section' is for showing the "Recently Viewed Kicks".
+       It was a bit of a puzzle getting the logic in app.py right to exclude the current item
+       and limit the number, but I think it's a useful feature. #}
+</section>
+{% endif %}
+{# This 'if' makes sure the whole "Recently Viewed" area only shows up if there's something to actually display. #}
+
+{# ... (This would be followed by the end of the {% block content %}) #}
