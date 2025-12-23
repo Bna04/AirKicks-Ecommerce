@@ -1,0 +1,230 @@
+{% extends "base.html" %}
+{# This checkout page also uses my main base.html for the header footer and overall layout #}
+
+{% block title %}Checkout - AirKicks{% endblock %}
+{# setting a specific title for the browser tab when the user is on the checkout page #}
+
+{% block content %}
+<div class="checkout-container" 
+style="max-width: 700px; margin: 2rem auto;
+padding: 2rem; background: var(--jordan-light);
+border-radius: 12px; color:white;">
+{# This is the main wrapper for all the content on my checkout page I added some inline styles here for quick layout #}
+    <h1>
+        Checkout
+    </h1>
+    {# The main title for the page #}
+    <p>
+        Please review your order and enter payment details
+    </p>
+    {# A little instruction for the user at the top #}
+
+    <div class="order-summary-checkout" 
+    style="margin-bottom: 2rem; padding: 1rem;
+    background:var(--jordan-dark); border-radius: 8px;">
+        <h3>
+            Order Summary
+        </h3>
+        {# Subheading for the order summary box #}
+        <p>
+            Total Items Price: 
+            <strong>
+                £{{ "%.2f"|format(grand_total) }}
+            </strong>
+        </p>
+        {# Shows the total price of the items from the cart #}
+        <p>
+            Total Carbon Footprint: 
+            <strong>
+                {{ "%.2f"|format(total_carbon_impact) }}kg CO₂
+            </strong>
+        </p>
+        {# Shows the total carbon footprint for the order #}
+        <hr>
+        {# Just a horizontal line to separate the details from the final amount #}
+        <h4>
+            Final Amount: 
+            <strong>
+                £{{ "%.2f"|format(grand_total) }}
+            </strong>
+        </h4>
+        {# Displays the final amount to be paid #}
+    </div>
+    {# This div shows a quick summary of the order before the user enters payment details #}
+
+    <form id="checkout-form" method="POST" action="{{ url_for('checkout') }}">
+        {# This is the main form for the checkout process and it sends data to my '/checkout' route using POST #}
+        <h2>
+            Payment Details (Simulation Only)
+        </h2>
+        {# Title for the payment section #}
+        <p style="color: var(--warning-orange); text-align:center;
+        font-weight:bold; margin-bottom:1rem;">
+            DO NOT ENTER REAL CREDIT CARD DETAILS THIS IS A SIMULATION
+        </p>
+        {# A very important warning message for the user styled to stand out #}
+
+        <div class="form-group {% if errors.card_name %}has-error{% endif %}">
+            {# Each form input is wrapped in a 'form-group' and the 'has-error' class is added if Flask found an error for this field #}
+            <label for="card_name">
+                Name on Card
+            </label>
+            {# Label for the input field #}
+            <input type="text" id="card_name" name="card_name"
+            value="{{ form_data.get('card_name', '') }}" required>
+            {# The actual input field for the name on the card 
+                It shows the previously entered value if there was an error and makes sure it's not empty #}
+            {% if errors.card_name %}
+                <span class="error-message" style="color: var(--danger-red);">
+                    {{ errors.card_name }}
+                </span>
+            {% endif %}
+            {# This part shows any error message for 'card_name' that came from my Flask app #}
+            <span class="error-message js-error" id="card_name_error" style="display:block;">
+
+            </span>
+            {# This empty span is where my JavaScript will put client-side validation error messages for this field #}
+        </div>
+        {# This div groups everything for the 'Name on Card' input #}
+
+        <div class="form-group {% if errors.card_number %}has-error{% endif %}">
+            <label for="card_number">
+                Card Number (16 digits)
+            </label>
+            <input type="text" id="card_number" name="card_number" placeholder="XXXX XXXX XXXX XXXX" value="{{ form_data.get('card_number', '') }}" required>
+            {# Input for the card number with a placeholder to show the format #}
+            {% if errors.card_number %}
+                <span class="error-message" style="color: var(--danger-red);">
+                    {{ errors.card_number }}
+                </span>
+            {% endif %}
+            {# Shows server-side validation errors for the card number #}
+            <span class="error-message js-error" id="card_number_error" style="display:block;">
+
+            </span>
+            {# For JavaScript validation errors for the card number #}
+        </div>
+        {# This div groups everything for the 'Card Number' input #}
+
+        <div class="form-row" style="display: flex; gap: 1rem;">
+            {# I used this 'form-row' div with flex display to put the Expiry Date and CVV fields side-by-side #}
+            <div class="form-group {% if errors.expiry %}has-error{% endif %}" style="flex: 1;">
+                <label for="expiry">
+                    Expiry Date (MM/YY)
+                </label>
+                <input type="text" id="expiry" name="expiry"
+                placeholder="MM/YY" value="{{ form_data.get('expiry', '') }}" required>
+                {# Input for expiry date #}
+                {% if errors.expiry %}
+                    <span class="error-message" style="color: var(--danger-red);">
+                        {{ errors.expiry }}
+                    </span>
+                {% endif %}
+                {# Server-side errors for expiry #}
+                <span class="error-message js-error" id="expiry_error" style="display:block;">
+
+                </span>
+                {# JavaScript errors for expiry #}
+            </div>
+            {# Div for the Expiry Date field #}
+
+            <div class="form-group {% if errors.cvv %}has-error{% endif %}" style="flex: 1;">
+                <label for="cvv">
+                    CVV (3-4 digits)
+                </label>
+                <input type="text" id="cvv" name="cvv"
+                placeholder="XXX" value="{{ form_data.get('cvv', '') }}" required>
+                {# Input for CVV #}
+                {% if errors.cvv %}
+                    <span class="error-message" style="color: var(--danger-red);">
+                        {{ errors.cvv }}
+                    </span>
+                {% endif %}
+                {# Server-side errors for CVV #}
+                <span class="error-message js-error" id="cvv_error" style="display:block;"></span>
+                {# JavaScript errors for CVV #}
+            </div>
+            {# Div for the CVV field #}
+        </div>
+        
+        <button type="submit" class="checkout-btn" style="margin-top: 2rem;">
+            Confirm & Pay (Simulated)
+        </button>
+        {# The main button to submit the checkout form #}
+    </form>
+    {# This is the end of my checkout form #}
+    
+    <p style="text-align: center; margin-top: 1rem;">
+        <a href="{{ url_for('view_cart') }}" class="button">
+            Return to Cart
+        </a>
+    </p>
+    {# A link to go back to the cart page #}
+</div>
+{# This is the main container for the whole checkout page #}
+
+<style>
+    /* I decided to put these styles right here in this HTML file
+       because they are pretty specific to just this checkout form
+       and it keeps them close to the HTML they are styling */
+
+    .checkout-container .form-group { 
+        margin-bottom: 1.5rem; 
+    }
+    /* This just adds some space below each group of label and input field */
+
+    .checkout-container .form-group label { 
+        display: block; 
+        margin-bottom: 0.5rem; 
+        font-weight: 500; 
+    }
+    /* Making my labels take up their own line and have a bit of space below them
+       also made the font a bit bolder to stand out */
+
+    .checkout-container .form-group input[type="text"] {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--jordan-gray);
+        border-radius: 4px;
+        background-color: var(--jordan-dark);
+        color: var(--jordan-white);
+        box-sizing: border-box;
+    }
+    /* Styling for all the text input fields in my form
+       I made them full width and gave them padding a border and a dark background to match my site
+       box-sizing border-box is a neat trick so the padding and border dont make the input wider than 100% */
+
+    .checkout-container .form-group input[type="text"]:focus {
+        border-color: var(--jordan-blue);
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(var(--jordan-accent-rgb, 57, 73, 171), 0.3);
+            /* The rgba for box-shadow needed a fallback so I added the RGB values for my --jordan-accent color */
+    }
+    /* Added a little highlight effect for when the user clicks into an input field
+       it changes the border color and adds a subtle glow using box-shadow */
+
+    .checkout-container .has-error input[type="text"] { 
+        border-color: var(--danger-red); 
+    }
+    /* If there's an error with an input my Flask app adds the 'has-error' class to the form-group
+       so I made the input border red here to make it obvious to the user */
+
+    .checkout-container .error-message { 
+        color: #ff8a80; /* This is a lighter red that shows up better on my dark background */
+        font-size: 0.85rem; 
+        margin-top: 0.3rem; 
+        min-height: 1em; /* I put min-height here so the layout doesnt jump around too much if an error message appears or disappears */
+    }
+    /* Basic styling for the error messages that can appear below the inputs
+       I made them a bit smaller and gave them a specific color */
+
+    .checkout-container .error-message.js-error { 
+        color: var(--warning-orange); 
+    }
+    /* I decided to make any JavaScript validation errors show up in orange
+       just so I could tell them apart from the server-side errors if I needed to */
+</style>
+{% endblock %}
+{# This is the end of the main content block for my checkout page #}
+{# I made sure to shorten the length of each line of code to make sure to keep a compact coding style
+ive been trying to keep throughout my project #}

@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{# This page uses my main base.html layout, so I get the header and footer from there. #}
+
+{% block title %}{{ product.name }} - AirKicks{% endblock %}
+{# Setting the browser tab title to the specific product's name to make it dynamic. #}
+
+{% block content %}
+<div class="product-detail-page">
+    <div class="product-detail-container">
+        <div class="product-detail-image-container">
+            <img src="{{ url_for('static',
+            filename='images/' + product.image) if product.image else url_for('static',
+            filename='images/default-sneaker.png') }}" 
+                 alt="{{ product.name }}" 
+                 class="product-detail-image">
+            {# Here I'm displaying the product's image and
+               product.image exists use it otherwise show 'default-sneaker.png'
+               This way it doesn't look broken if an image is missing #}
+        </div>
+        {# This part is for showing the big image of the product, usually on the left. #}
+        
+        <div class="product-detail-info">
+            <h1 class="product-detail-title">
+                {{ product.name }}
+            </h1>
+            {# Displaying the product's name as a big title using H1. #}
+            
+            <div class="product-detail-price">
+                £{{ "%.2f"|format(product.price) }}
+            </div>
+            {# Showing the price. I used the 'format' filter to make sure it always shows two decimal places. #}
+            
+            <div class="product-detail-eco">
+                <span>
+                    🌱
+                </span>
+                <span>
+                    {{ product.carbon_footprint }}kg CO₂
+                </span>
+            </div>
+            {# Displaying the carbon footprint information for the product. #}
+            
+            <div class="product-detail-description">
+                <h3>
+                    Product Details
+                </h3>
+                {# A little subheading for the description text. #}
+                <p>
+                    {{ product.description }}
+                </p>
+                {# This is where the main description of the product goes. #}
+            </div>
+            
+            <button class="add-to-cart detail" data-product-id="{{ product.id }}">
+                🛒 Add to Cart
+            </button>
+            {# This is the button for adding this specific product to the shopping cart.
+               The data-product-id is important so my JavaScript knows which product to add. #}
+        </div>
+        {# This div on the right side shows all the text information: name, price, description, and the add to cart button. #}
+    </div>
+    {# This is the main container that holds both the product image and its details side-by-side. #}
+
+    {% if recently_viewed %}
+    {# I only want this "Recently Viewed" section to show up if there are actually any items the user looked at before this one. #}
+    <section class="recently-viewed-section">
+        <h2>
+            Recently Viewed Kicks
+        </h2>
+        {# The title for this "Recently Viewed" section. #}
+        <div class="product-grid recently-viewed-grid">
+            {% for recent_product in recently_viewed %}
+            {# Here, I'm looping through each 'recent_product' that was passed from my app.py. #}
+            <article class="sneaker-card recent-item" data-product-id="{{ recent_product.id }}">
+                <a href="{{ url_for('product_details', product_id=recent_product.id) }}" class="product-link">
+                    {# Each recently viewed item is a clickable link taking the user to that product's own detail page. #}
+                    <div class="product-image-container">
+                        <img src="{{ url_for('static',
+                        filename='images/' + recent_product.image) if recent_product.image else url_for('static',
+                        filename='images/default-sneaker.png') }}" 
+                             alt="{{ recent_product.name }}" 
+                             class="product-image">
+                        {# Displaying the image for the recently viewed product, with the same fallback logic I used above. #}
+                    </div>
+                    <div class="sneaker-info">
+                        <h4 class="product-title">
+                            {{ recent_product.name }}
+                        </h4>
+                        {# The name of the recently viewed product. I used an H4 for a smaller heading here. #}
+                        <div class="price-eco-container">
+                            <div class="price-tag">
+                                £{{ "%.2f"|format(recent_product.price) }}
+                            </div>
+                            {# Its price, formatted nicely. #}
+                             <div class="eco-rating">
+                                <span>
+                                    🌱
+                                </span>
+                                <span>
+                                    {{ recent_product.carbon_footprint }}kg
+                                </span>
+                                {# And its eco rating info. #}
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                {# I decided not to put an "Add to Cart" button here for recently viewed to keep it simple, users can click through. #}
+            </article>
+            {# This is one card for a recently viewed product. The loop will create one for each. #}
+            {% endfor %}
+            {# This ends the loop for recently_viewed items. #}
+        </div>
+        {# This div uses my product-grid styles to show the recently viewed items in a nice layout. #}
+    </section>
+    {# This whole section is for the "Recently Viewed Kicks" feature. It was a bit tricky to implement but works well now. #}
+    {% endif %}
+    {# This ends the 'if recently_viewed' block, so it won't show anything if the list is empty. #}
+</div>
+{# This is the main outer container for the entire product detail page content. #}
+{% endblock %}
+{# This ends the main content block that this page puts into base.html. #}
