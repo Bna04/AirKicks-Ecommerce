@@ -1,3 +1,7 @@
+<img width="1897" height="987" alt="image" src="https://github.com/user-attachments/assets/1885942e-31d0-4cab-a365-f651b8a0dfad" />
+
+
+
 # AirKicks | Full Stack E-Commerce Platform
 
 I built this project last year for a university coursework module, but decided to upload it to GitHub now (in 2025) to show that I can build a proper **Full Stack applications** from scratch, rather than just using cloud services.
