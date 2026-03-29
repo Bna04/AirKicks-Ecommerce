@@ -10,7 +10,7 @@
         {% if search_query %}
             Search Results for: "{{ search_query }}"
         {% else %}
-            Browse Our Premium Selection 🏀
+            Browse Our Premium Selection
         {% endif %}
     </h2>
     {# This heading changes and shows "Search Results" if the user searched for something, 
@@ -20,9 +20,9 @@
     {# I decided to only show these sort buttons if the user is just Browse the main page,
        not when they're looking at search results. Seemed cleaner that way. #}
     <div class="sort_buttons">
-        <a href="{{ url_for('home', sort='name') }}" class="sort-btn {% if current_sort == 'name' %}active{% endif %}">🔤 A-Z</a>
-        <a href="{{ url_for('home', sort='price') }}" class="sort-btn {% if current_sort == 'price' %}active{% endif %}">💷 Price</a>
-        <a href="{{ url_for('home', sort='carbon') }}" class="sort-btn {% if current_sort == 'carbon' %}active{% endif %}">🌱 Eco Rating</a>
+        <a href="{{ url_for('home', sort='name') }}" class="sort-btn {% if current_sort == 'name' %}active{% endif %}"> A-Z</a>
+        <a href="{{ url_for('home', sort='price') }}" class="sort-btn {% if current_sort == 'price' %}active{% endif %}"> PRICE</a>
+        <a href="{{ url_for('home', sort='carbon') }}" class="sort-btn {% if current_sort == 'carbon' %}active{% endif %}">ECO RATING</a>
     </div>
     {# These are the links for sorting the products. I made the 'active' class highlight
        which sorting option is currently being used, which I think is a nice touch for the user. #}
@@ -54,12 +54,12 @@
                 {# This is for the product's name. #}
                 <div class="price-eco-container">
                     <div class="price-tag">
-                        £{{ "%.2f"|format(product.price) }}
+                       £{{ product.price | int }}
                     </div>
-                    {# Displaying the price, formatted to two decimal places. #}
+                    {# Displaying the price #}
                     <div class="eco-rating">
                         <span>
-                            🌱
+                            
                         </span>
                         <span>
                             {{ product.carbon_footprint }}kg CO₂
@@ -72,7 +72,7 @@
             {# This div holds the text info for the product card. #}
         </a>
         <button class="add-to-cart" data-product-id="{{ product.id }}"> 
-            🛒 Add
+            ADD TO CART
         </button>
         {# The 'Add to Cart' button for each product. Again, data-product-id is for my JavaScript. #}
     </article>

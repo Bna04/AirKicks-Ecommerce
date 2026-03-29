@@ -50,7 +50,7 @@
                 
                 <a href="{{ url_for('view_cart') }}" 
                    {% if request.endpoint == 'view_cart' %}class="active"{% endif %}>
-                   Cart <span class="cart-icon">🛒</span>
+                   Cart <span class="cart-icon"></span>
                 </a>
                 {# Link to the Shopping Cart page
                    Also has the 'active' class logic #}
@@ -60,7 +60,7 @@
                       class="search-form">
                     <input type="search" 
                            name="q" 
-                           placeholder="Search kicks..." 
+                           placeholder="Search" 
                            aria-label="Search" 
                            class="search-input" 
                            value="{{ request.args.get('q', '') }}">
@@ -80,6 +80,8 @@
     </header>
     {# This is the main header for my whole website
        It appears on every page because it's in this base template #}
+
+       <div class="promo-strip">FREE EXPRESS DELIVERY ON ALL ORDERS</div>
 
     <div class="flash-messages-container container">
         {# This is where any flash messages from my Flask app will show up
